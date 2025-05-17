@@ -1,7 +1,17 @@
 import { useState, useEffect } from 'react';
 
-const CategoryFilter = ({ categories, setCategoryFilter, initialValue = '' }) => {
-  const [selectedCategory, setSelectedCategory] = useState(initialValue);
+interface CategoryFilterProps {
+  categories: string[];
+  setCategoryFilter: (category: string) => void;
+  initialValue?: string;
+}
+
+export default function CategoryFilter({ 
+  categories, 
+  setCategoryFilter, 
+  initialValue = '' 
+}: CategoryFilterProps) {
+  const [selectedCategory, setSelectedCategory] = useState<string>(initialValue);
 
   useEffect(() => {
     if (setCategoryFilter) {
@@ -14,7 +24,7 @@ const CategoryFilter = ({ categories, setCategoryFilter, initialValue = '' }) =>
       <select
         className="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
         value={selectedCategory}
-        onChange={(e) => setSelectedCategory(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedCategory(e.target.value)}
       >
         <option value="">All Categories</option>
         {categories.map((category) => (
@@ -25,6 +35,4 @@ const CategoryFilter = ({ categories, setCategoryFilter, initialValue = '' }) =>
       </select>
     </div>
   );
-};
-
-export default CategoryFilter;
+}

@@ -1,110 +1,137 @@
-import { useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { fetchProducts } from '@/services/apiService';
-import SearchInput from '@/components/SearchInput';
-import Dropdown from '@/components/Dropdown';
-import CategoryFilter from '@/components/CategoryFilter';
-import Pagination from '@/components/Pagination';
-
-interface Product {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  category: string;
-  rating: number;
-}
+import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import AddProductForm from '@/components/AddProductForm';
+import EditProductForm from '@/components/EditProductForm';
+import ProductDetailsModal from '@/components/ProductDetailsModal';
+import DeleteConfirmationModal from '@/components/DeleteConfirmationModal';
+import { fetchProducts, deleteProduct } from '@/services/apiService';
+import Pagination from '@/components/Pagination'; 
+import type { Product } from '@/types/types';
 
 export default function Products() {
-  const { data, isLoading, error } = useQuery<Product[]>({
+  const queryClient = useQueryClient();
+
+  // State for modals
+  const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState<boolean>(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
+  
+  // State for selected product
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const productsPerPage = 10; // Number of products per page
+
+  // Fetch products
+  const { data: products, isLoading, error } = useQuery<Product[], Error>({
     queryKey: ['products'],
     queryFn: fetchProducts
   });
 
-  const [favorites, setFavorites] = useState<number[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [sortOption, setSortOption] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(10);
-
- 
-  const categories = data 
-    ? [...new Set(data.map(product => product.category))]
-    : [];
-
-  // Filter products
-  const filteredProducts = data?.filter(product => {
-    const matchesSearch = 
-      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.category.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesCategory = 
-      categoryFilter === '' || product.category.toLowerCase() === categoryFilter.toLowerCase();
-    
-    return matchesSearch && matchesCategory;
-  }) || [];
-
-  // Sort products
-  const sortedProducts = [...filteredProducts].sort((a, b) => {
-    if (sortOption === 'price-low-high') return a.price - b.price;
-    if (sortOption === 'price-high-low') return b.price - a.price;
-    return 0;
+  // Delete mutation
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => deleteProduct(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+      setIsDeleteModalOpen(false);
+      toast.success("Product Deleted Successfully");
+    },
+    onError: (error: Error) => {
+      console.error('Delete error:', error);
+      toast.error("Failed to Delete Product, Please try again.");
+    }
   });
 
-  // Pagination logic
-  const totalItems = sortedProducts.length;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = sortedProducts.slice(indexOfFirstItem, indexOfLastItem);
-
-  const toggleFavorite = (productId: number) => {
-    setFavorites(prev =>
-      prev.includes(productId)
-        ? prev.filter(id => id !== productId)
-        : [...prev, productId]
-    );
+  // Open modals
+  const openAddModal = () => {
+    setIsAddModalOpen(true);
   };
 
-  // Reset to first page when filters change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTerm, sortOption, categoryFilter]);
+  const openDetailsModal = (product: Product) => {
+    setSelectedProduct(product);
+    setIsDetailsModalOpen(true);
+  };
+
+  const openEditModal = (product: Product) => {
+    setSelectedProduct(product);
+    setIsEditModalOpen(true);
+  };
+
+  const openDeleteModal = (product: Product) => {
+    setSelectedProduct(product);
+    setIsDeleteModalOpen(true);
+  };
+
+  // Handle delete product
+  const handleDeleteProduct = () => {
+    if (selectedProduct) {
+      deleteMutation.mutate(selectedProduct.id);
+    }
+  };
+
+  // Handle add success
+  const handleAddSuccess = () => {
+    setIsAddModalOpen(false);
+  };
+
+  // Handle edit success
+  const handleEditSuccess = () => {
+    setIsEditModalOpen(false);
+    toast.success("Product Edited Successfully");
+  };
+
+  // Handle page change
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo(0, 0); // Scroll to top when changing pages
+  };
 
   if (isLoading) return (
-   <div className="flex justify-center items-center py-10 text-lg">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mr-3"></div>
-        Loading Products...
-      </div>
+    <div className="flex justify-center items-center py-10 text-lg">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mr-3"></div>
+      Loading Products...
+    </div>
   );
 
   if (error) return (
     <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
       <strong className="font-bold">Error: </strong>
-      <span className="block sm:inline">{(error as Error).message}</span>
+      <span className="block sm:inline">{error.message}</span>
     </div>
   );
+
+  // Calculate pagination details
+  const totalProducts = products?.length || 0;
+  const totalPages = Math.ceil(totalProducts / productsPerPage);
+  
+  // Get current products for display
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = products?.slice(indexOfFirstProduct, indexOfLastProduct) || [];
+
+  // Categories from products
+  const categories = products 
+    ? [...new Set(products.map(product => product.category))]
+    : [];
 
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
-        <h1 className="text-3xl font-bold text-gray-800">Products</h1>
+        <h1 className="text-3xl font-bold text-gray-800">Product Management</h1>
 
-        <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-          {/* Search Bar */}
-          <SearchInput setSearchTerm={setSearchTerm} />
+        <Button onClick={openAddModal} className="cursor-pointer">
+          Add New Product
+        </Button>
+      </div>
 
-          {/* Category Filter */}
-          <CategoryFilter 
-            categories={categories} 
-            setCategoryFilter={setCategoryFilter} 
-          />
-
-          {/* Sort Dropdown */}
-          <Dropdown setSortOption={setSortOption} />
-        </div>
+      {/* Products count */}
+      <div className="mb-4 text-sm text-gray-600">
+        Showing {indexOfFirstProduct + 1}-{Math.min(indexOfLastProduct, totalProducts)} of {totalProducts} products
       </div>
 
       {/* Products Table */}
@@ -112,41 +139,20 @@ export default function Products() {
         <table className="min-w-full bg-white border border-gray-200 rounded-lg overflow-hidden">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rating</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200 cursor-pointer">
-            {currentItems.map((product) => (
-              <tr key={product.id} className="hover:bg-gray-50">
-                <td className="px-4 py-4 whitespace-nowrap text-center">
-                  <button
-                    onClick={() => toggleFavorite(product.id)}
-                    className="focus:outline-none cursor-pointer"
-                    aria-label={favorites.includes(product.id) ? "Remove from favorites" : "Add to favorites"}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className={`h-6 w-6 ${favorites.includes(product.id) ? 'text-red-500 fill-current' : 'text-gray-300 fill-current hover:text-red-400'}`}
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </button>
-                </td>
+          <tbody className="divide-y divide-gray-200">
+            {currentProducts.map((product) => (
+              <tr key={product.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => openDetailsModal(product)}>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm font-medium text-gray-900">{product.name}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">${product.price.toFixed(2)}</div>
+                  <div className="text-sm text-gray-900">GH₵{product.price}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-900 capitalize">{product.category}</div>
@@ -174,12 +180,60 @@ export default function Products() {
         </table>
       </div>
 
-      {/* Pagination */}
-      <Pagination 
-        currentPage={currentPage} 
-        totalPages={totalPages} 
-        onPageChange={setCurrentPage} 
+      {/* Pagination Component */}
+      {totalPages > 1 && (
+        <Pagination 
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      )}
+
+      {/* Add Product Modal */}
+      <AddProductForm 
+        isOpen={isAddModalOpen} 
+        onClose={() => setIsAddModalOpen(false)}
+        onSuccess={handleAddSuccess}
+        categories={categories}
       />
+
+      {/* Edit Product Modal */}
+      {selectedProduct && (
+        <EditProductForm 
+          isOpen={isEditModalOpen} 
+          onClose={() => setIsEditModalOpen(false)}
+          onSuccess={handleEditSuccess}
+          product={selectedProduct}
+          categories={categories}
+        />
+      )}
+
+      {/* Product Details Modal */}
+      {selectedProduct && (
+        <ProductDetailsModal 
+          isOpen={isDetailsModalOpen}
+          onClose={() => setIsDetailsModalOpen(false)}
+          product={selectedProduct}
+          onEdit={() => {
+            setIsDetailsModalOpen(false);
+            openEditModal(selectedProduct);
+          }}
+          onDelete={() => {
+            setIsDetailsModalOpen(false);
+            openDeleteModal(selectedProduct);
+          }}
+        />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {selectedProduct && (
+        <DeleteConfirmationModal 
+          isOpen={isDeleteModalOpen}
+          onClose={() => setIsDeleteModalOpen(false)}
+          product={selectedProduct}
+          onConfirm={handleDeleteProduct}
+        />
+      )}
     </div>
   );
 }
