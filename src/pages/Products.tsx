@@ -19,18 +19,15 @@ type SortOption = '' | 'price-low-high' | 'price-high-low';
 export default function Products() {
   const queryClient = useQueryClient();
 
-  // State for modals
+
   const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState<boolean>(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
-  
-  // State for selected product
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-
-  // Pagination state
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const productsPerPage = 12; // Increased from 10 to 12 for better grid layout
+
+  const productsPerPage = 12; 
 
   // Filter and sort states
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -100,9 +97,8 @@ export default function Products() {
     window.scrollTo(0, 0); 
   };
 
-  // Filter and sort products
+ 
   const filteredAndSortedProducts = products ? [...products].filter(product => {
-    // Apply search filter
     if (searchTerm) {
       const lowercasedSearch = searchTerm.toLowerCase();
       if (!product.name.toLowerCase().includes(lowercasedSearch) && 
@@ -118,7 +114,6 @@ export default function Products() {
     
     return true;
   }).sort((a, b) => {
-    // Apply sorting
     if (sortOption === 'price-low-high') {
       return a.price - b.price;
     } else if (sortOption === 'price-high-low') {
@@ -133,28 +128,29 @@ export default function Products() {
   }, [searchTerm, categoryFilter, sortOption]);
 
   if (isLoading) return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-50">
-      <div className="bg-white p-8 rounded-xl shadow-lg flex flex-col items-center">
-        <div className="w-16 h-16 border-4 border-t-blue-600 border-b-blue-300 border-l-blue-300 border-r-blue-300 rounded-full animate-spin mb-4"></div>
-        <p className="text-lg font-medium text-gray-700">Loading Products...</p>
+    <div className="flex justify-center items-center py-10 text-lg">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mr-3"></div>
+        Loading Products...
       </div>
-    </div>
   );
 
   if (error) return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-lg p-6 max-w-md w-full">
-        <div className="flex items-center text-red-500 mb-4">
-          <svg className="w-8 h-8 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <div className="min-h-screen bg-gradient-to-r from-rose-50 to-red-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full transform transition-all duration-500 hover:shadow-2xl">
+        <div className="flex items-center text-red-500 mb-6">
+          <svg className="w-10 h-10 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          <h2 className="text-xl font-bold">Error Occurred</h2>
+          <h2 className="text-2xl font-bold">Error Occurred</h2>
         </div>
-        <p className="text-gray-700 mb-4">{error.message}</p>
+        <p className="text-gray-700 mb-6 text-lg">{error.message}</p>
         <button 
           onClick={() => window.location.reload()}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors duration-200"
+          className="w-full bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white py-3 px-6 rounded-xl transition-all duration-300 font-medium text-lg shadow-md hover:shadow-lg flex items-center justify-center"
         >
+          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
           Retry
         </button>
       </div>
@@ -176,63 +172,113 @@ export default function Products() {
     : [];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
  
         <div className="p-6 mb-8">
-
-
-          <div className='flex flex-col justify-center items-center '>
-              <h1 className="md:text-4xl text-3xl font-semibold text-gray-900 mb-4">Product Management Dashboard</h1>
+          <div className="flex flex-col justify-center items-center mb-8">
+            <div className=" mb-6">
+              <h1 className="md:text-5xl text-2xl font-bold text-center  ">
+                Product Management Dashboard
+              </h1>
+              <div className="h-1 w-24 bg-neutral-800 mx-auto mt-4 rounded-full"></div>
+            </div>
+            <p className="text-gray-600 text-center max-w-2xl text-lg">
+              Manage your product inventory with ease. Add, edit, and delete products with a simple interface.
+            </p>
           </div>
 
-            <div className='w-auto md:flex-row flex flex-col md:justify-between py-5 md:space-y-0 space-y-2'>           
-                <Button 
-              onClick={openAddModal} 
-              className="bg-black hover:bg-gray-700 text-white px-6 py-2 rounded-lg shadow-sm transition-all duration-200 flex items-center justify-center  cursor-pointer "
-            >
-              <svg className="w-5 h-5 mr-2 " fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-              </svg>
-              Add New Product
-            </Button>
-
-             <div className="flex flex-col md:flex-row md:space-x-2 space-y-2 cursor-pointer">
-               <div className="flex items-center justify-between">
-              {searchTerm || categoryFilter || sortOption ? (
-                <button 
-                  onClick={() => {
-                    setSearchTerm('');
-                    setCategoryFilter('');
-                    setSortOption('');
-                  }}
-                  className="text-sm cursor-pointer text-blue-600 hover:text-blue-800 flex items-center"
-                >
-                  <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                  Clear All Filters
-                </button>
-              ) : null}
+          <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 transform transition-all duration-300 hover:shadow-xl">
+            <div className="md:flex justify-between items-center mb-6">
+              <Button 
+                onClick={openAddModal} 
+                className="bg-black hover:bg-neutral-800 text-white px-8 py-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center cursor-pointer font-medium text-md mb-4 md:mb-0 w-full md:w-auto transform hover:translate-y-px"
+              >
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Add New Product
+              </Button>
+              
+              <div className="flex items-center text-sm">
+                <svg className="w-4 h-4 text-indigo-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span className="text-gray-500">
+                  Showing {totalProducts > 0 ? indexOfFirstProduct + 1 : 0}-{Math.min(indexOfLastProduct, totalProducts)} of {totalProducts} products
+                </span>
+              </div>
             </div>
-              <SearchInput setSearchTerm={setSearchTerm} initialValue={searchTerm} />
-              <CategoryFilter categories={categories} setCategoryFilter={setCategoryFilter} initialValue={categoryFilter} />
-              <Dropdown setSortOption={setSortOption} initialValue={sortOption} />
-            </div>
-            </div>
-              <p className="text-sm text-gray-500 py-2">
-                Showing {totalProducts > 0 ? indexOfFirstProduct + 1 : 0}-{Math.min(indexOfLastProduct, totalProducts)} of {totalProducts} products
-              </p>
             
-           
-    
+            <div className="bg-gray-50 p-4 rounded-xl mb-6">
+              <div className="flex flex-col md:flex-row md:space-x-4 space-y-3 md:space-y-0">
+                <div className="flex-grow">
+                  <SearchInput setSearchTerm={setSearchTerm} initialValue={searchTerm} />
+                </div>
+                <div className="flex flex-col md:flex-row md:space-x-3 space-y-3 md:space-y-0">
+                  <CategoryFilter categories={categories} setCategoryFilter={setCategoryFilter} initialValue={categoryFilter} />
+                  <Dropdown setSortOption={setSortOption} initialValue={sortOption} />
+                </div>
+              </div>
+              
+              {(searchTerm || categoryFilter || sortOption) && (
+                <div className="flex items-center mt-3 px-2 py-1 bg-indigo-50 rounded-lg w-fit">
+                  <button 
+                    onClick={() => {
+                      setSearchTerm('');
+                      setCategoryFilter('');
+                      setSortOption('');
+                    }}
+                    className="text-sm cursor-pointer text-indigo-600 hover:text-indigo-800 flex items-center font-medium"
+                  >
+                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    Clear All Filters
+                  </button>
+                </div>
+              )}
+            </div>
 
-          {/* Products Grid */}
-          <ProductsTable currentProducts={currentProducts} openDetailsModal={openDetailsModal} />
+            {/* Products Display */}
+            <div className="bg-white rounded-xl transition-all duration-300">
+              <ProductsTable currentProducts={currentProducts} openDetailsModal={openDetailsModal} />
+              
+              {/* Empty state */}
+              {currentProducts.length === 0 && (
+                <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+                  <svg className="w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                  </svg>
+                  <h3 className="text-xl font-medium text-gray-700 mb-2">No products found</h3>
+                  <p className="text-gray-500 max-w-sm">
+                    {searchTerm || categoryFilter || sortOption 
+                      ? "Try adjusting your search or filter criteria to see more results." 
+                      : "Add your first product to get started with inventory management."}
+                  </p>
+                  {(searchTerm || categoryFilter || sortOption) && (
+                    <button 
+                      onClick={() => {
+                        setSearchTerm('');
+                        setCategoryFilter('');
+                        setSortOption('');
+                      }}
+                      className="mt-4 text-indigo-600 hover:text-indigo-800 font-medium flex items-center"
+                    >
+                      <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                      Reset Filters
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
           
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="mt-8 flex justify-center">
+            <div className="flex justify-center mt-8">
               <Pagination 
                 currentPage={currentPage}
                 totalPages={totalPages}

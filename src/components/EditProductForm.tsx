@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,9 +21,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { Product } from '@/types/types';
+import { updateProduct } from '@/services/apiService';
 
-// API endpoint
-const API_URL = 'https://mock-data-josw.onrender.com/products';
+
 
 
 // Props interface
@@ -36,18 +35,14 @@ interface EditProductFormProps {
   categories: string[];
 }
 
-// API function
-const updateProduct = async (product: Product): Promise<Product> => {
-  const response = await axios.put(`${API_URL}/${product.id}`, product);
-  return response.data;
-};
+
 
 export default function EditProductForm({ isOpen, onClose, onSuccess, product, categories }: EditProductFormProps) {
   const queryClient = useQueryClient();
 
-  // Form state
+
   const [formData, setFormData] = useState<Product>({
-    id: 0,  // Changed from empty string to 0
+    id: 0, 
     name: '',
     price: 0,
     description: '',
@@ -55,11 +50,11 @@ export default function EditProductForm({ isOpen, onClose, onSuccess, product, c
     rating: 0
   });
   
-  // New category state
+
   const [isNewCategory, setIsNewCategory] = useState(false);
   const [newCategory, setNewCategory] = useState('');
 
-  // Update form data when product changes
+
   useEffect(() => {
     if (product) {
       setFormData({
@@ -81,11 +76,11 @@ export default function EditProductForm({ isOpen, onClose, onSuccess, product, c
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
       onSuccess();
-      toast.success("Product Edited Successfully");
+      toast.success("Product Updated Successfully");
     },
     onError: (error) => {
       console.error('Edit error:', error);
-      toast.error("Failed to Edit Product, Please try again.");
+      toast.error("Failed to Update Product, Please try again.");
     }
   });
 

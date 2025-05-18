@@ -119,17 +119,17 @@ export default function AddProductForm({ isOpen, onClose, onSuccess, categories 
     setNewCategory('');
   };
 
-  // Handle form close
+
   const handleClose = () => {
     resetForm();
     onClose();
   };
 
-  // Handle add product form submission
+ 
   const handleAddProduct = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    // Convert form data to the required format for API
+
     const productData: Omit<Product, 'id'> = {
       name: formData.name,
       price: typeof formData.price === 'string' ? parseFloat(formData.price) || 0 : formData.price,
