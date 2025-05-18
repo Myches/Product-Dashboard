@@ -35,7 +35,7 @@ export default function ProductDetailsModal({
           <div className="space-y-4">
             <div>
               <h3 className="text-lg font-medium">{product.name}</h3>
-              <p className="text-2xl font-bold text-gray-700 mt-1">${product.price.toFixed(2)}</p>
+              <p className="text-2xl font-bold text-gray-700 mt-1">GH₵{product.price.toFixed(2)}</p>
             </div>
             
             <div>
@@ -67,22 +67,28 @@ export default function ProductDetailsModal({
             </div>
           </div>
         </div>
-        <DialogFooter>
+   
+        <DialogFooter >
+            <Button type="button"  className='cursor-pointer' onClick={onClose}>
+              Cancel
+            </Button>
           <Button 
-            variant="outline" 
-            size="sm" 
+       
+        
             onClick={() => onEdit(product)}
+            className=' cursor-pointer'
           >
             Edit
           </Button>
           <Button 
             variant="destructive" 
-            size="sm" 
             onClick={() => onDelete(product)}
+            className='cursor-pointer'
           >
             Delete
           </Button>
         </DialogFooter>
+ 
       </DialogContent>
     </Dialog>
   );

@@ -46,9 +46,9 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
           Next
         </button>
       </div>
-      <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+      <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between ">
         <div>
-          <p className="text-sm text-gray-700">
+          <p className="text-sm text-gray-700 px-3">
             Showing page <span className="font-medium">{currentPage}</span> of{' '}
             <span className="font-medium">{totalPages}</span>
           </p>
@@ -69,7 +69,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
                 key={page}
                 onClick={() => onPageChange(page)}
                 className={`cursor-pointer relative inline-flex items-center px-4 py-2 text-sm font-semibold ${currentPage === page 
-                  ? 'bg-blue-600 text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600' 
+                  ? 'bg-black text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600' 
                   : 'text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0'}`}
               >
                 {page}

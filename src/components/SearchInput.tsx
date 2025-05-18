@@ -20,6 +20,7 @@ const SearchInput = ({ setSearchTerm, initialValue = '' }: SearchInputProps) => 
       placeholder="Search..."
       value={searchTermLocal}
       onChange={(e) => setSearchTermLocal(e.target.value)}
+      className='p-2 border border-black focus:outline-none rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
     />
   );
 };

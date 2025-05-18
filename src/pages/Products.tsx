@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -9,6 +9,12 @@ import DeleteConfirmationModal from '@/components/DeleteConfirmationModal';
 import { fetchProducts, deleteProduct } from '@/services/apiService';
 import Pagination from '@/components/Pagination'; 
 import type { Product } from '@/types/types';
+import Dropdown from '@/components/Dropdown';
+import SearchInput from '@/components/SearchInput';
+import CategoryFilter from '@/components/CategoryFilter';
+import ProductsTable from '@/components/ProductsTable';
+
+type SortOption = '' | 'price-low-high' | 'price-high-low';
 
 export default function Products() {
   const queryClient = useQueryClient();
@@ -24,7 +30,12 @@ export default function Products() {
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const productsPerPage = 10; // Number of products per page
+  const productsPerPage = 12; // Increased from 10 to 12 for better grid layout
+
+  // Filter and sort states
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [categoryFilter, setCategoryFilter] = useState<string>('');
+  const [sortOption, setSortOption] = useState<SortOption>('');
 
   // Fetch products
   const { data: products, isLoading, error } = useQuery<Product[], Error>({
@@ -81,37 +92,83 @@ export default function Products() {
   // Handle edit success
   const handleEditSuccess = () => {
     setIsEditModalOpen(false);
-    toast.success("Product Edited Successfully");
   };
 
   // Handle page change
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    window.scrollTo(0, 0); // Scroll to top when changing pages
+    window.scrollTo(0, 0); 
   };
 
+  // Filter and sort products
+  const filteredAndSortedProducts = products ? [...products].filter(product => {
+    // Apply search filter
+    if (searchTerm) {
+      const lowercasedSearch = searchTerm.toLowerCase();
+      if (!product.name.toLowerCase().includes(lowercasedSearch) && 
+          !product.category.toLowerCase().includes(lowercasedSearch)) {
+        return false;
+      }
+    }
+    
+    // Apply category filter
+    if (categoryFilter && product.category !== categoryFilter) {
+      return false;
+    }
+    
+    return true;
+  }).sort((a, b) => {
+    // Apply sorting
+    if (sortOption === 'price-low-high') {
+      return a.price - b.price;
+    } else if (sortOption === 'price-high-low') {
+      return b.price - a.price;
+    }
+    return 0;
+  }) : [];
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, categoryFilter, sortOption]);
+
   if (isLoading) return (
-    <div className="flex justify-center items-center py-10 text-lg">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mr-3"></div>
-      Loading Products...
+    <div className="flex justify-center items-center min-h-screen bg-gray-50">
+      <div className="bg-white p-8 rounded-xl shadow-lg flex flex-col items-center">
+        <div className="w-16 h-16 border-4 border-t-blue-600 border-b-blue-300 border-l-blue-300 border-r-blue-300 rounded-full animate-spin mb-4"></div>
+        <p className="text-lg font-medium text-gray-700">Loading Products...</p>
+      </div>
     </div>
   );
 
   if (error) return (
-    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-      <strong className="font-bold">Error: </strong>
-      <span className="block sm:inline">{error.message}</span>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-xl shadow-lg p-6 max-w-md w-full">
+        <div className="flex items-center text-red-500 mb-4">
+          <svg className="w-8 h-8 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <h2 className="text-xl font-bold">Error Occurred</h2>
+        </div>
+        <p className="text-gray-700 mb-4">{error.message}</p>
+        <button 
+          onClick={() => window.location.reload()}
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors duration-200"
+        >
+          Retry
+        </button>
+      </div>
     </div>
   );
 
   // Calculate pagination details
-  const totalProducts = products?.length || 0;
+  const totalProducts = filteredAndSortedProducts.length;
   const totalPages = Math.ceil(totalProducts / productsPerPage);
   
   // Get current products for display
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = products?.slice(indexOfFirstProduct, indexOfLastProduct) || [];
+  const currentProducts = filteredAndSortedProducts.slice(indexOfFirstProduct, indexOfLastProduct);
 
   // Categories from products
   const categories = products 
@@ -119,77 +176,74 @@ export default function Products() {
     : [];
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
-        <h1 className="text-3xl font-bold text-gray-800">Product Management</h1>
+    <div className="min-h-screen bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+ 
+        <div className="p-6 mb-8">
 
-        <Button onClick={openAddModal} className="cursor-pointer">
-          Add New Product
-        </Button>
+
+          <div className='flex flex-col justify-center items-center '>
+              <h1 className="md:text-4xl text-3xl font-semibold text-gray-900 mb-4">Product Management Dashboard</h1>
+          </div>
+
+            <div className='w-auto md:flex-row flex flex-col md:justify-between py-5 md:space-y-0 space-y-2'>           
+                <Button 
+              onClick={openAddModal} 
+              className="bg-black hover:bg-gray-700 text-white px-6 py-2 rounded-lg shadow-sm transition-all duration-200 flex items-center justify-center  cursor-pointer "
+            >
+              <svg className="w-5 h-5 mr-2 " fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              Add New Product
+            </Button>
+
+             <div className="flex flex-col md:flex-row md:space-x-2 space-y-2 cursor-pointer">
+               <div className="flex items-center justify-between">
+              {searchTerm || categoryFilter || sortOption ? (
+                <button 
+                  onClick={() => {
+                    setSearchTerm('');
+                    setCategoryFilter('');
+                    setSortOption('');
+                  }}
+                  className="text-sm cursor-pointer text-blue-600 hover:text-blue-800 flex items-center"
+                >
+                  <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                  Clear All Filters
+                </button>
+              ) : null}
+            </div>
+              <SearchInput setSearchTerm={setSearchTerm} initialValue={searchTerm} />
+              <CategoryFilter categories={categories} setCategoryFilter={setCategoryFilter} initialValue={categoryFilter} />
+              <Dropdown setSortOption={setSortOption} initialValue={sortOption} />
+            </div>
+            </div>
+              <p className="text-sm text-gray-500 py-2">
+                Showing {totalProducts > 0 ? indexOfFirstProduct + 1 : 0}-{Math.min(indexOfLastProduct, totalProducts)} of {totalProducts} products
+              </p>
+            
+           
+    
+
+          {/* Products Grid */}
+          <ProductsTable currentProducts={currentProducts} openDetailsModal={openDetailsModal} />
+          
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="mt-8 flex justify-center">
+              <Pagination 
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Products count */}
-      <div className="mb-4 text-sm text-gray-600">
-        Showing {indexOfFirstProduct + 1}-{Math.min(indexOfLastProduct, totalProducts)} of {totalProducts} products
-      </div>
-
-      {/* Products Table */}
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-200 rounded-lg overflow-hidden">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rating</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {currentProducts.map((product) => (
-              <tr key={product.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => openDetailsModal(product)}>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">{product.name}</div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">GH₵{product.price}</div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900 capitalize">{product.category}</div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <div className="text-sm text-gray-900 mr-2">{product.rating}</div>
-                    <div className="flex">
-                      {[...Array(5)].map((_, i) => (
-                        <svg
-                          key={i}
-                          className={`h-4 w-4 ${i < Math.floor(product.rating) ? 'text-yellow-400' : 'text-gray-300'}`}
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
-                      ))}
-                    </div>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Pagination Component */}
-      {totalPages > 1 && (
-        <Pagination 
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
-      )}
-
-      {/* Add Product Modal */}
+      {/* Modals */}
       <AddProductForm 
         isOpen={isAddModalOpen} 
         onClose={() => setIsAddModalOpen(false)}
@@ -197,42 +251,37 @@ export default function Products() {
         categories={categories}
       />
 
-      {/* Edit Product Modal */}
       {selectedProduct && (
-        <EditProductForm 
-          isOpen={isEditModalOpen} 
-          onClose={() => setIsEditModalOpen(false)}
-          onSuccess={handleEditSuccess}
-          product={selectedProduct}
-          categories={categories}
-        />
-      )}
+        <>
+          <EditProductForm 
+            isOpen={isEditModalOpen} 
+            onClose={() => setIsEditModalOpen(false)}
+            onSuccess={handleEditSuccess}
+            product={selectedProduct}
+            categories={categories}
+          />
 
-      {/* Product Details Modal */}
-      {selectedProduct && (
-        <ProductDetailsModal 
-          isOpen={isDetailsModalOpen}
-          onClose={() => setIsDetailsModalOpen(false)}
-          product={selectedProduct}
-          onEdit={() => {
-            setIsDetailsModalOpen(false);
-            openEditModal(selectedProduct);
-          }}
-          onDelete={() => {
-            setIsDetailsModalOpen(false);
-            openDeleteModal(selectedProduct);
-          }}
-        />
-      )}
+          <ProductDetailsModal 
+            isOpen={isDetailsModalOpen}
+            onClose={() => setIsDetailsModalOpen(false)}
+            product={selectedProduct}
+            onEdit={() => {
+              setIsDetailsModalOpen(false);
+              openEditModal(selectedProduct);
+            }}
+            onDelete={() => {
+              setIsDetailsModalOpen(false);
+              openDeleteModal(selectedProduct);
+            }}
+          />
 
-      {/* Delete Confirmation Modal */}
-      {selectedProduct && (
-        <DeleteConfirmationModal 
-          isOpen={isDeleteModalOpen}
-          onClose={() => setIsDeleteModalOpen(false)}
-          product={selectedProduct}
-          onConfirm={handleDeleteProduct}
-        />
+          <DeleteConfirmationModal 
+            isOpen={isDeleteModalOpen}
+            onClose={() => setIsDeleteModalOpen(false)}
+            product={selectedProduct}
+            onConfirm={handleDeleteProduct}
+          />
+        </>
       )}
     </div>
   );

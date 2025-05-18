@@ -21,24 +21,35 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import type { Product } from '@/types/types';
 
 // API endpoint
 const API_URL = 'https://mock-data-josw.onrender.com/products';
 
+
+// Props interface
+interface EditProductFormProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSuccess: () => void;
+  product: Product | null;
+  categories: string[];
+}
+
 // API function
-const updateProduct = async (product) => {
+const updateProduct = async (product: Product): Promise<Product> => {
   const response = await axios.put(`${API_URL}/${product.id}`, product);
   return response.data;
 };
 
-export default function EditProductForm({ isOpen, onClose, onSuccess, product, categories }) {
+export default function EditProductForm({ isOpen, onClose, onSuccess, product, categories }: EditProductFormProps) {
   const queryClient = useQueryClient();
 
   // Form state
-  const [formData, setFormData] = useState({
-    id: '',
+  const [formData, setFormData] = useState<Product>({
+    id: 0,  // Changed from empty string to 0
     name: '',
-    price: '',
+    price: 0,
     description: '',
     category: '',
     rating: 0
@@ -70,25 +81,25 @@ export default function EditProductForm({ isOpen, onClose, onSuccess, product, c
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
       onSuccess();
-       toast.success("Product Edited Successfully");
+      toast.success("Product Edited Successfully");
     },
-     onError: (error) => {
+    onError: (error) => {
       console.error('Edit error:', error);
-       toast.error("Failed to Edit Product, Please try again.");
+      toast.error("Failed to Edit Product, Please try again.");
     }
   });
 
   // Handle form input changes
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: name === 'price' || name === 'rating' ? parseFloat(value) : value
+      [name]: name === 'price' || name === 'rating' ? parseFloat(value) || 0 : value
     }));
   };
 
   // Handle category select change
-  const handleCategoryChange = (value) => {
+  const handleCategoryChange = (value: string) => {
     if (value === 'new') {
       setIsNewCategory(true);
       setFormData(prev => ({
@@ -105,7 +116,7 @@ export default function EditProductForm({ isOpen, onClose, onSuccess, product, c
   };
 
   // Handle new category input change
-  const handleNewCategoryChange = (e) => {
+  const handleNewCategoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     setNewCategory(value);
     setFormData(prev => ({
@@ -115,7 +126,7 @@ export default function EditProductForm({ isOpen, onClose, onSuccess, product, c
   };
 
   // Handle edit product form submission
-  const handleEditProduct = (e) => {
+  const handleEditProduct = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     updateMutation.mutate(formData);
   };
@@ -223,7 +234,7 @@ export default function EditProductForm({ isOpen, onClose, onSuccess, product, c
             </div>
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" className='cursor-pointer' onClick={onClose}>
+            <Button type="button" className='cursor-pointer' onClick={onClose}>
               Cancel
             </Button>
             <Button type="submit" className='cursor-pointer' disabled={updateMutation.isPending}>

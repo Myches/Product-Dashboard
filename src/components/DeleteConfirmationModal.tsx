@@ -36,20 +36,21 @@ export default function DeleteConfirmationModal({
         <div className="py-4">
           <p className="font-medium text-gray-900">{product.name}</p>
           <p className="text-gray-500">
-            ${product.price.toFixed(2)} - {product.category}
+           GH₵{product.price.toFixed(2)} - {product.category}
           </p>
         </div>
         <DialogFooter>
           <Button 
             type="button" 
-            variant="outline" 
             onClick={onClose}
+            className='cursor-pointer'
           >
             Cancel
           </Button>
           <Button 
             variant="destructive" 
             onClick={onConfirm}
+            className='cursor-pointer'
           >
             Delete
           </Button>

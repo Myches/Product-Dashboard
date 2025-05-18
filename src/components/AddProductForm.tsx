@@ -244,7 +244,7 @@ export default function AddProductForm({ isOpen, onClose, onSuccess, categories 
             </div>
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" className="cursor-pointer" onClick={handleClose}>
+            <Button type="button"  className="cursor-pointer" onClick={handleClose}>
               Cancel
             </Button>
             <Button type="submit" className="cursor-pointer" disabled={addMutation.isPending}>
