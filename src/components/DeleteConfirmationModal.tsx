@@ -1,4 +1,3 @@
-import type { Product } from '@/types/types';
 import {
   Dialog,
   DialogContent,
@@ -8,13 +7,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import type { DeleteConfirmationModalProps } from '@/types/types';
 
-interface DeleteConfirmationModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  product: Product | null;
-  onConfirm: () => void;
-}
+
 
 export default function DeleteConfirmationModal({
   isOpen,

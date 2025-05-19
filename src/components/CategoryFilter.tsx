@@ -1,10 +1,6 @@
 import { useState, useEffect } from 'react';
+import type { CategoryFilterProps } from '@/types/types';
 
-interface CategoryFilterProps {
-  categories: string[];
-  setCategoryFilter: (category: string) => void;
-  initialValue?: string;
-}
 
 export default function CategoryFilter({ 
   categories, 

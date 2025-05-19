@@ -23,26 +23,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { Product } from '@/types/types';
+import type { AddProductFormProps } from '@/types/types';
+import type { ProductFormData } from '@/types/types';
 
-interface AddProductFormProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSuccess: () => void;
-  categories: string[];
-}
 
-interface ProductFormData {
-  name: string;
-  price: string | number;
-  description: string;
-  category: string;
-  rating: number;
-}
+
 
 export default function AddProductForm({ isOpen, onClose, onSuccess, categories }: AddProductFormProps) {
   const queryClient = useQueryClient();
 
-  // Form state
+  
   const [formData, setFormData] = useState<ProductFormData>({
     name: '',
     price: '',
@@ -51,11 +41,11 @@ export default function AddProductForm({ isOpen, onClose, onSuccess, categories 
     rating: 0
   });
   
-  // New category state
+
   const [isNewCategory, setIsNewCategory] = useState<boolean>(false);
   const [newCategory, setNewCategory] = useState<string>('');
 
-  // Add mutation
+
   const addMutation = useMutation({
     mutationFn: (data: Omit<Product, 'id'>) => addProduct(data),
     onSuccess: () => {

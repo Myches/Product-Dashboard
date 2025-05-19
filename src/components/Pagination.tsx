@@ -1,11 +1,7 @@
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
+import type { PaginationProps } from '@/types/types';
 
 
-interface PaginationProps {
-  currentPage: number;
-  totalPages: number;
-  onPageChange: (page: number) => void;
-}
 
 export default function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) {
   const maxVisiblePages = 5;

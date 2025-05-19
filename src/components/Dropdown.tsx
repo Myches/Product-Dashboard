@@ -1,11 +1,6 @@
 import { useState, useEffect } from 'react';
-
-type SortOption = '' | 'price-low-high' | 'price-high-low';
-
-interface DropdownProps {
-  setSortOption: (option: SortOption) => void;
-  initialValue?: SortOption;
-}
+import type { DropdownProps } from '@/types/types';
+import type { SortOption } from '@/types/types';
 
 export default function Dropdown({ 
   setSortOption, 

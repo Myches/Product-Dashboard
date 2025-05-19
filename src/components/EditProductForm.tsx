@@ -22,18 +22,9 @@ import {
 } from "@/components/ui/select";
 import type { Product } from '@/types/types';
 import { updateProduct } from '@/services/apiService';
+import type { EditProductFormProps } from '@/types/types';
 
 
-
-
-// Props interface
-interface EditProductFormProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSuccess: () => void;
-  product: Product | null;
-  categories: string[];
-}
 
 
 
@@ -70,7 +61,7 @@ export default function EditProductForm({ isOpen, onClose, onSuccess, product, c
     }
   }, [product]);
 
-  // Update mutation
+
   const updateMutation = useMutation({
     mutationFn: updateProduct,
     onSuccess: () => {

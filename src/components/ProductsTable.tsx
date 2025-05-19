@@ -1,16 +1,13 @@
-import type { Product } from "@/types/types";
-import { useState, useEffect } from "react";
 
-interface ProductsTableProps {
-  currentProducts: Product[];
-  openDetailsModal: (product: Product) => void;
-}
+import { useState, useEffect } from "react";
+import type { ProductsTableProps } from "@/types/types";
+
 
 const ProductsTable = ({ currentProducts, openDetailsModal }: ProductsTableProps) => {
   const [favorites, setFavorites] = useState<Record<number, boolean>>({});
   const [minHeight, setMinHeight] = useState("auto");
 
-  // Load favorites from local storage on component mount
+  
   useEffect(() => {
     const savedFavorites = localStorage.getItem('productFavorites');
     if (savedFavorites) {

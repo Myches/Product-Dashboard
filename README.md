@@ -1,54 +1,121 @@
-# React + TypeScript + Vite
+Product Dashboard
+A React-based product management interface that allows users to view, create, edit, delete, search, and filter products from a RESTful API.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+📋 Features
+Product Display: View products with name, price, category, and rating information
+CRUD Operations:
 
-Currently, two official plugins are available:
+Create new products
+View product details
+Update existing products
+Delete products
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Favorites System: Mark products as favorites and persist them across sessions
+Search & Filtering:
 
-## Expanding the ESLint configuration
+Search products by name
+Filter by category
+Sort by price (ascending/descending)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Modal Details: Click on any product to view full details
+Pagination: Navigate through large product lists with ease
+Toast Notifications: Receive feedback on actions like create, update, delete
+Responsive Design: Optimized for both desktop and mobile viewing
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+🛠️ Tech Stack
+React: UI library for building the interface
+Vite : For building and running the app
+Typescript : For Type safety during development
+Axios: For API requests
+Lucide React: For icons
+Shadcn: For reusable UI components
+Tailwind CSS: For styling components
+Vitest and React Testing Library: For Unit Testing
+React Query: For fetching and mutation of API data
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+🔧 Setup and Installation
+Prerequisites
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Node.js (v14.0.0 or later)
+npm or yarn
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+Installation Steps
+
+Clone the repository:
+
+git clone https://github.com/Myches/Product-Dashboard.git
+cd product-management-app
+git checkout master
+
+Install dependencies:
+
+npm install
+# or
+yarn install
+
+Start the development server:
+
+npm run dev
+# or
+yarn run dev
+
+Open your browser and navigate to:
+
+http://localhost:3000
+
+📱 Usage
+Navigation Flow
+
+Main Dashboard:
+View all products in a paginated table format
+Use the search bar to find products by name
+Filter by category using the dropdown
+Sort by price using the sort buttons
+Click the star icon to add/remove from favorites
+
+Creating a Product:
+
+Click the "Add New Product" button
+Fill in the product details in the form
+Submit to create a new product
+Receive a success toast notification
+
+Viewing Product Details:
+
+Click on any product row to view full details in a modal
+See name, price, description, and category
+
+Editing a Product:
+
+Click the "Edit" button on the product details modal
+Modify details in the populated form
+Submit to update the product
+Receive a success toast notification
+
+Deleting a Product:
+
+Click the "Delete" button on the product details modal
+Confirm deletion in the confirmation dialog
+Product is removed from the list
+Receive a success toast notification
+
+Managing Favorites:
+
+Click on the star icon to toggle favorite status
+Favorites persist even after closing the browser
+
+Testing Components:
+
+Run 'npm run test' in the terminal
+
+📝 Design Decisions & Assumptions
+
+API Handling: Implemented comprehensive data fetching and mutation logic using React Query with established robust error handling and loading state for all API calls
+Responsive Design: Prioritized mobile responsiveness
+Performance Optimizations: Implemented pagination to limit the number of products loaded at once
+Local Storage: Used for favorites persistence as it provides a simple solution without requiring backend modifications
+
+🔮 Future Improvements
+With more time, I would add:
+
+Unit Tests: Expand the coverage of the tests

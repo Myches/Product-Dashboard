@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
+import type { SearchInputProps } from '@/types/types';
 
-interface SearchInputProps {
-  setSearchTerm: (term: string) => void;
-  initialValue?: string;
-}
+
 
 const SearchInput = ({ setSearchTerm, initialValue = '' }: SearchInputProps) => {
   const [searchTermLocal, setSearchTermLocal] = useState(initialValue);
