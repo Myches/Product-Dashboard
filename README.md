@@ -61,7 +61,7 @@ A React-based product management interface that allows users to view, create, ed
 2. Navigate to the cloned project directory:
 
    ```bash
-   cd product-management-app
+   cd Product-Dashboard
    ```
 
 3. Checkout to the master branch:
