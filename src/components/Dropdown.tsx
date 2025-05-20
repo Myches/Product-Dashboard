@@ -12,6 +12,10 @@ export default function Dropdown({
     setSortOption(sortOption);
   }, [sortOption, setSortOption]);
 
+   useEffect(() => {
+    setSortOptionLocal(initialValue as SortOption);
+  }, [initialValue]);
+
   return (
     <div className="w-full sm:w-48">
       <select

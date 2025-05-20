@@ -29,12 +29,12 @@ export default function Products() {
 
   const productsPerPage = 12; 
 
-  // Filter and sort states
+
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [categoryFilter, setCategoryFilter] = useState<string>('');
   const [sortOption, setSortOption] = useState<SortOption>('');
 
-  // Fetch products
+ 
   const { data: products, isLoading, error } = useQuery<Product[], Error>({
     queryKey: ['products'],
     queryFn: fetchProducts
@@ -54,7 +54,7 @@ export default function Products() {
     }
   });
 
-  // Open modals
+
   const openAddModal = () => {
     setIsAddModalOpen(true);
   };
@@ -91,7 +91,7 @@ export default function Products() {
     setIsEditModalOpen(false);
   };
 
-  // Handle page change
+ 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     window.scrollTo(0, 0); 
@@ -157,7 +157,7 @@ export default function Products() {
     </div>
   );
 
-  // Calculate pagination details
+  
   const totalProducts = filteredAndSortedProducts.length;
   const totalPages = Math.ceil(totalProducts / productsPerPage);
   
@@ -166,7 +166,7 @@ export default function Products() {
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = filteredAndSortedProducts.slice(indexOfFirstProduct, indexOfLastProduct);
 
-  // Categories from products
+ 
   const categories = products 
     ? [...new Set(products.map(product => product.category))]
     : [];

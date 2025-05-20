@@ -15,6 +15,10 @@ export default function CategoryFilter({
     }
   }, [selectedCategory, setCategoryFilter]);
 
+   useEffect(() => {
+    setSelectedCategory(initialValue);
+  }, [initialValue]);
+
   return (
     <div className="w-full sm:w-48">
       <select
