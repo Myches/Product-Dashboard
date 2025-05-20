@@ -34,8 +34,8 @@ const ProductsTable = ({ currentProducts, openDetailsModal }: ProductsTableProps
   };
 
   return (
- <div 
-  className="flex-1 overflow-auto "
+<div 
+  className="flex-1 overflow-auto"
   style={{ minHeight }}
 >
   <table className="min-w-full table-auto divide-y divide-gray-200 products-table text-sm">
@@ -48,12 +48,14 @@ const ProductsTable = ({ currentProducts, openDetailsModal }: ProductsTableProps
         <th className="px-6 py-3 text-left font-semibold text-gray-600 tracking-wide">Rating</th>
       </tr>
     </thead>
-    <tbody className="divide-y divide-gray-100 bg-white">
+    <tbody className="divide-y divide-gray-200">
       {currentProducts.length > 0 ? (
-        currentProducts.map((product) => (
+        currentProducts.map((product, index) => (
           <tr 
             key={product.id}
-            className="hover:bg-gray-50 transition-colors duration-200 cursor-pointer group"
+            className={`transition-colors duration-200 cursor-pointer group ${
+              index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+            } hover:bg-gray-100`}
             onClick={() => openDetailsModal(product)}
           >
             <td 
