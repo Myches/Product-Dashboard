@@ -1,121 +1,138 @@
-Product Dashboard
-A React-based product management interface that allows users to view, create, edit, delete, search, and filter products from a RESTful API.
 
-📋 Features
-Product Display: View products with name, price, category, and rating information
-CRUD Operations:
+# Product Dashboard
 
-Create new products
-View product details
-Update existing products
-Delete products
+A React-based product management interface that allows users to view, create, edit, delete, search,sort and filter products from a RESTful API
 
-Favorites System: Mark products as favorites and persist them across sessions
-Search & Filtering:
 
-Search products by name
-Filter by category
-Sort by price (ascending/descending)
+## 📋 Features
+  **Product Display** : View products with name, price, category, and rating information
+  
+  **CRUD Operations** : 
+  - create new products
+  - View product details
+  - Update existing products
+  - Delete products
 
-Modal Details: Click on any product to view full details
-Pagination: Navigate through large product lists with ease
-Toast Notifications: Receive feedback on actions like create, update, delete
-Responsive Design: Optimized for both desktop and mobile viewing
+  **Favorites System** : Mark products as favorites and persist them across sessions
+  
+  **Search & Filtering**:
+  - Search products by name
+  - Filter by category
+  - Sort by price (ascending/descending)
 
-🛠️ Tech Stack
-React: UI library for building the interface
-Vite : For building and running the app
-Typescript : For Type safety during development
-Axios: For API requests
-Lucide React: For icons
-Shadcn: For reusable UI components
-Tailwind CSS: For styling components
-Vitest and React Testing Library: For Unit Testing
-React Query: For fetching and mutation of API data
+  **Modal Details**: Click on any product to view full details.
+  
+  **Pagination**: Navigate through large product lists with ease.
+  
+  **Toast Notifications**: Receive feedback on actions like create, update, delete.
+  
+  **Responsive Design**: Optimized for both desktop and mobile viewing
 
-🔧 Setup and Installation
-Prerequisites
+## 🛠️ Tech Stack
 
-Node.js (v14.0.0 or later)
-npm or yarn
+- **React**: UI library for building the interface
+- **Vite**: For building and running the app
+- **Typescript**: For Type safety during development
+- **Axios**: For API requests
+- **Lucide React**: For icons
+- **Shadcn**: For reusable UI components
+- **Tailwind CSS**: For styling components
+- **Vitest and React Testing Library**: For Unit Testing
+- **React Query**: For fetching and mutation of API data
 
-Installation Steps
+## 🔧 Setup and Installation
 
-Clone the repository:
+### Prerequisites
+- Node.js (v14.0.0 or later)
+- npm or yarn
 
-git clone https://github.com/Myches/Product-Dashboard.git
-cd product-management-app
-git checkout master
+### Installation Steps
 
-Install dependencies:
+1. ####  Clone the Repository
 
-npm install
-# or
-yarn install
+- Open your terminal or command prompt.
+- Navigate to the directory where you want to clone the project.
+- Run the following command to clone the repository:
 
-Start the development server:
+   ```bash
+   git clone https://github.com/Myches/Product-Dashboard.git
+   ```
 
-npm run dev
-# or
-yarn run dev
+2. Navigate to the cloned project directory:
 
-Open your browser and navigate to:
+   ```bash
+   cd product-management-app
+   ```
 
-http://localhost:3000
+3. Checkout to the master branch:
 
-📱 Usage
-Navigation Flow
+   ```bash
+   git checkout master
+    ```
+  
 
-Main Dashboard:
-View all products in a paginated table format
-Use the search bar to find products by name
-Filter by category using the dropdown
-Sort by price using the sort buttons
-Click the star icon to add/remove from favorites
+4. **Install dependencies**:
+   ```bash
+   npm install
+   ```
 
-Creating a Product:
+5. **Start the development server**:
 
-Click the "Add New Product" button
-Fill in the product details in the form
-Submit to create a new product
-Receive a success toast notification
+   ```bash
+   npm run dev
+   ```
+6.  Open your browser and go to the specified URL (e.g., `http://localhost:5173`).
 
-Viewing Product Details:
+## 📱 Usage
 
-Click on any product row to view full details in a modal
-See name, price, description, and category
+### Navigation Flow
 
-Editing a Product:
+#### Main Dashboard:
+- View all products in a paginated table format
+- Use the search bar to find products by name
+- Filter by category using the dropdown
+- Sort by price using the sort buttons
+- Click the heart icon to add/remove from favorites
 
-Click the "Edit" button on the product details modal
-Modify details in the populated form
-Submit to update the product
-Receive a success toast notification
+#### Creating a Product:
+- Click the "Add New Product" button
+- Fill in the product details in the form
+- Submit to create a new product
+- Receive a success toast notification
 
-Deleting a Product:
+#### Viewing Product Details:
+- Click on any product row to view full details in a modal
+- See name, price, description, and category
 
-Click the "Delete" button on the product details modal
-Confirm deletion in the confirmation dialog
-Product is removed from the list
-Receive a success toast notification
+#### Editing a Product:
+- Click the "Edit" button on the product details modal
+- Modify details in the populated form
+- Submit to update the product
+- Receive a success toast notification
 
-Managing Favorites:
+#### Deleting a Product:
+- Click the "Delete" button on the product details modal
+- Confirm deletion in the confirmation dialog
+- Product is removed from the list
+- Receive a success toast notification
 
-Click on the star icon to toggle favorite status
-Favorites persist even after closing the browser
+#### Managing Favorites:
+- Click on the heart icon to toggle favorite status
+- Favorites persist even after closing the browser
 
-Testing Components:
+#### Testing Components:
+```bash
+npm run test
+```
 
-Run 'npm run test' in the terminal
+## 📝 Design Decisions & Assumptions
 
-📝 Design Decisions & Assumptions
+- **API Handling**: Implemented comprehensive data fetching and mutation logic using React Query with established robust error handling and loading state for all API calls
+- **Responsive Design**: Prioritized mobile responsiveness
+- **Performance Optimizations**: Implemented pagination to limit the number of products loaded at once
+- **Local Storage**: Used for favorites persistence as it provides a simple solution without requiring backend modifications
 
-API Handling: Implemented comprehensive data fetching and mutation logic using React Query with established robust error handling and loading state for all API calls
-Responsive Design: Prioritized mobile responsiveness
-Performance Optimizations: Implemented pagination to limit the number of products loaded at once
-Local Storage: Used for favorites persistence as it provides a simple solution without requiring backend modifications
+## 🔮 Future Improvements
 
-🔮 Future Improvements
 With more time, I would add:
-
-Unit Tests: Expand the coverage of the tests
+- **Unit Tests**: Expand the coverage of the tests
